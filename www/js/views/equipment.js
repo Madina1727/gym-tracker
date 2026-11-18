@@ -53,6 +53,8 @@ async function renderImport(root, path) {
   root.innerHTML = `<div class="page-head"><div><div class="eyebrow">Equipment</div><h1>Adding equipment…</h1></div></div><div class="empty">${icon("loader")}<p>Reading ${esc(path)}</p></div>`;
   paint(root);
   try {
+    // Only files next to the app or on this computer's own local server.
+    if (!/^(inbox\/[\w.-]+\.json|http:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/inbox\/[\w.-]+\.json)$/.test(path)) throw new Error("This import link is not allowed.");
     const res = await fetch(path, { cache: "no-store" });
     if (!res.ok) throw new Error("File not found: " + path);
     const r = await importPack(await res.json());
