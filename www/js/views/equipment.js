@@ -3,12 +3,14 @@ import { S, save, uid, now, equip, savedDays, itemName, actualText, exerciseKey,
 import { KINDS, MUSCLES, isCardio, kindOf, FIELDS, targetFields } from "../kinds.js";
 import { esc, icon, photoImg, pickPhotos, viewPhoto, deletePhoto, confirmBox, toast, paint, val } from "../ui.js";
 import { group, photoStrip, wirePhotoStrip, unitInput } from "../parts.js";
+import { importPack } from "../pack.js";
 import { showField, readField, unitLabel, fromW } from "../store.js";
 
 let filter = { q: "", g: "all" };
 
 export function render(root, args) {
   if (args[0] === "new") return renderEdit(root, null);
+  if (args[0] === "import") return renderImport(root, args.slice(1).join("/"));
   if (args[0] && args[1] === "edit") return renderEdit(root, equip(args[0]));
   if (args[0]) return renderDetail(root, equip(args[0]));
   renderList(root);
@@ -28,7 +30,7 @@ function renderList(root) {
     .sort((a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0) || a.name.localeCompare(b.name));
   const usedMuscles = MUSCLES.filter((m) => all.some((e) => (e.muscles || []).includes(m)));
   root.innerHTML = `
-    <div class="page-head"><div><div class="eyebrow">Equipment</div><h1>My gym</h1></div><a class="btn primary" href="#/equipment/new">${icon("plus")}Add equipment</a></div>
+    <div class="page-head"><div><div class="eyebrow">Equipment</div><h1>My gym</h1></div><div class="row gap"><button class="btn ghost" data-importfile>${icon("upload")}Import</button><a class="btn primary" href="#/equipment/new">${icon("plus")}Add equipment</a></div></div>
     ${all.length ? `<input class="input" type="search" data-q placeholder="Search machines, muscles, notes" value="${esc(filter.q)}" style="margin-bottom:10px">
     <div class="chips" style="margin-bottom:16px">
       ${[["all", "All"], ["fav", "Favourites"], ["cardio", "Cardio"], ["strength", "Strength"], ...usedMuscles.map((m) => [m, m])].map(([k, l]) => `<button class="chip ${filter.g === k ? "on" : ""}" data-g="${esc(k)}">${k === "fav" ? icon("star") : ""}${esc(l)}</button>`).join("")}
@@ -38,6 +40,25 @@ function renderList(root) {
   const qi = root.querySelector("[data-q]");
   if (qi) qi.oninput = () => { filter.q = qi.value; const pos = qi.selectionStart; window.__rerender().then(() => { const n = document.querySelector("[data-q]"); n.focus(); n.setSelectionRange(pos, pos); }); };
   root.querySelectorAll("[data-g]").forEach((b) => b.onclick = () => { filter.g = b.dataset.g; window.__rerender(); });
+  root.querySelector("[data-importfile]").onclick = () => {
+    const inp = document.createElement("input"); inp.type = "file"; inp.accept = "application/json,.json";
+    inp.onchange = async () => { try { report(await importPack(JSON.parse(await inp.files[0].text()))); window.__rerender(); } catch (e) { toast(e.message); } };
+    inp.click();
+  };
+}
+const report = (r) => toast(`Added ${r.added} machine${r.added === 1 ? "" : "s"}${r.skipped ? `, ${r.skipped} already in your library` : ""}`);
+
+/** #/equipment/import/<path on this site>: adds a pack placed next to the app (used for local files only). */
+async function renderImport(root, path) {
+  root.innerHTML = `<div class="page-head"><div><div class="eyebrow">Equipment</div><h1>Adding equipment…</h1></div></div><div class="empty">${icon("loader")}<p>Reading ${esc(path)}</p></div>`;
+  paint(root);
+  try {
+    const res = await fetch(path, { cache: "no-store" });
+    if (!res.ok) throw new Error("File not found: " + path);
+    const r = await importPack(await res.json());
+    report(r);
+    location.replace("#/equipment");
+  } catch (e) { root.querySelector(".empty p").textContent = e.message; }
 }
 
 /** Past records of this machine, newest first. */

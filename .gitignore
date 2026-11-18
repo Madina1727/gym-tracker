@@ -7,3 +7,7 @@ android/app/src/main/assets/public/
 *.apk
 .DS_Store
 
+
+# Files for one-off local import; never published
+www/inbox/
+*.equipment.json
