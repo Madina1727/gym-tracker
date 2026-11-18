@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Gym Tracker</title>
+  <meta name="description" content="Plan each gym session, record what you actually did, and watch your progress.">
+  <meta name="theme-color" content="#111412">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/app.css?v=20261118063746">
+</head>
+<body>
+  <div id="app" class="shell">
+    <aside class="side" aria-label="Main">
+      <a class="brand" href="#/"><span class="brand-mark"></span><span>Gym Tracker</span></a>
+      <nav class="side-nav" id="side-nav"></nav>
+      <div class="side-foot" id="side-sync"></div>
+    </aside>
+    <header class="top">
+      <a class="brand" href="#/"><span class="brand-mark"></span><span>Gym Tracker</span></a>
+      <a class="icon-btn" href="#/profile" aria-label="Profile"><i data-lucide="user-round" class="ic"></i></a>
+    </header>
+    <main id="view" tabindex="-1"></main>
+    <nav class="tabbar" id="tabbar" aria-label="Main"></nav>
+  </div>
+  <script src="vendor/lucide.min.js"></script>
+  <script type="importmap">{"imports":{"./js/app.js":"./js/app.js?v=20261118063746","./js/charts.js":"./js/charts.js?v=20261118063746","./js/config.js":"./js/config.js?v=20261118063746","./js/db.js":"./js/db.js?v=20261118063746","./js/kinds.js":"./js/kinds.js?v=20261118063746","./js/measure.js":"./js/measure.js?v=20261118063746","./js/parts.js":"./js/parts.js?v=20261118063746","./js/store.js":"./js/store.js?v=20261118063746","./js/sync.js":"./js/sync.js?v=20261118063746","./js/ui.js":"./js/ui.js?v=20261118063746","./js/views/equipment.js":"./js/views/equipment.js?v=20261118063746","./js/views/home.js":"./js/views/home.js?v=20261118063746","./js/views/plan.js":"./js/views/plan.js?v=20261118063746","./js/views/profile.js":"./js/views/profile.js?v=20261118063746","./js/views/progress.js":"./js/views/progress.js?v=20261118063746","./js/views/welcome.js":"./js/views/welcome.js?v=20261118063746","./js/views/workout.js":"./js/views/workout.js?v=20261118063746"}}</script>
+  <script type="module" src="js/app.js?v=20261118063746"></script>
+</body>
+</html>
