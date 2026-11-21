@@ -11,3 +11,4 @@ android/app/src/main/assets/public/
 # Files for one-off local import; never published
 www/inbox/
 *.equipment.json
+tools/fiat-gym/

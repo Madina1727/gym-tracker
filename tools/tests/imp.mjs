@@ -1,0 +1,14 @@
+import { createRequire } from "node:module";
+const require = createRequire("/Users/madina/Desktop/wayu-korea/package.json");
+const { chromium } = require("playwright");
+const b = await chromium.launch(); const ctx = await b.newContext({ viewport: { width: 1280, height: 900 } }); const p = await ctx.newPage();
+const errs = []; p.on("pageerror", (e) => errs.push(e.message));
+await p.goto("http://localhost:5190/"); await p.waitForTimeout(600);
+await p.fill("[data-name]", "T"); await p.click("[data-go]"); await p.waitForTimeout(400);
+await p.goto("http://localhost:5190/#/equipment/import/inbox/fiat-gym.equipment.json"); await p.waitForTimeout(6000);
+await p.screenshot({ path: "imp1.png", fullPage: true });
+const n = await p.evaluate(async () => (await import("./js/store.js")).S.state.equipment.length);
+await p.goto("http://localhost:5190/#/equipment/import/inbox/fiat-gym.equipment.json"); await p.waitForTimeout(4000);
+const n2 = await p.evaluate(async () => (await import("./js/store.js")).S.state.equipment.length);
+await p.click(".eq-card >> text=Sinco pullover machine"); await p.waitForTimeout(800); await p.screenshot({ path: "imp2.png", fullPage: true });
+console.log("count", n, "after re-import", n2, errs); await b.close();
